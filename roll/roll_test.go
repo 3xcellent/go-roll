@@ -9,7 +9,7 @@ import (
 )
 
 func TestParseStrToRoll(t *testing.T) {
-	seed := newRandomSeed()
+	rand.Seed(time.Now().UnixNano())
 
 	type args struct {
 		str string
@@ -28,7 +28,6 @@ func TestParseStrToRoll(t *testing.T) {
 				chooseHigh: false,
 				chooseLow:  false,
 				modifier:   0,
-				randomizer: seed,
 			},
 		},
 		{
@@ -40,7 +39,6 @@ func TestParseStrToRoll(t *testing.T) {
 				chooseHigh: false,
 				chooseLow:  false,
 				modifier:   0,
-				randomizer: seed,
 			},
 		},
 		{
@@ -52,7 +50,6 @@ func TestParseStrToRoll(t *testing.T) {
 				chooseHigh: false,
 				chooseLow:  false,
 				modifier:   9,
-				randomizer: seed,
 			},
 		},
 		{
@@ -64,7 +61,6 @@ func TestParseStrToRoll(t *testing.T) {
 				chooseHigh: true,
 				chooseLow:  false,
 				modifier:   -1,
-				randomizer: seed,
 			},
 		},
 		{
@@ -76,13 +72,12 @@ func TestParseStrToRoll(t *testing.T) {
 				chooseHigh: false,
 				chooseLow:  true,
 				modifier:   8,
-				randomizer: seed,
 			},
 		},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			if got := ParseStrToRoll(tt.args.str, seed); !reflect.DeepEqual(got, tt.want) {
+			if got := ParseStrToRoll(tt.args.str); !reflect.DeepEqual(got, tt.want) {
 				t.Errorf("ParseStrToRoll() = %v, want %v", got, tt.want)
 			}
 		})
@@ -90,15 +85,15 @@ func TestParseStrToRoll(t *testing.T) {
 }
 
 func TestRoll_Calc(t *testing.T) {
-	seed := newRandomSeed()
-	r := ParseStrToRoll("d20", seed)
+	rand.Seed(time.Now().UnixNano())
+	r := ParseStrToRoll("d20")
 
 	totals := map[int]int{}
 	for i := 1; i <= r.maxScore; i++ {
 		totals[i] = 0
 	}
 
-	for i := 0; i < 1000; i++ {
+	for i := 0; i < 10000; i++ {
 		val := r.Calc()
 		totals[val] = totals[val] + 1
 	}
@@ -106,8 +101,4 @@ func TestRoll_Calc(t *testing.T) {
 	for i := 1; i <= 20; i++ {
 		fmt.Printf("%d - %d\n", i, totals[i])
 	}
-}
-
-func newRandomSeed() *rand.Rand {
-	return rand.New(rand.NewSource(time.Now().Unix()))
 }

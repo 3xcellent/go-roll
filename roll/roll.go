@@ -22,17 +22,15 @@ type Roll struct {
 	chooseHigh bool
 	chooseLow  bool
 	modifier   int
-	randomizer *rand.Rand
 }
 
-func ParseStrToRoll(str string, r *rand.Rand) Roll {
+func ParseStrToRoll(str string) Roll {
 	return Roll{
 		numRolls:   parseInt(str, reRolls, 1, false),
 		maxScore:   parseInt(str, reType, 0, true),
 		chooseHigh: parseBool(str, reHigh),
 		chooseLow:  parseBool(str, reLow),
 		modifier:   parseInt(str, reModifier, 0, false),
-		randomizer: r,
 	}
 }
 
@@ -54,8 +52,8 @@ func (r Roll) Calc() int {
 
 func (r Roll) getRoll() int {
 	if r.chooseHigh {
-		roll1 := r.randomizer.Intn(r.maxScore) + 1
-		roll2 := r.randomizer.Intn(r.maxScore) + 1
+		roll1 := rand.Intn(r.maxScore) + 1
+		roll2 := rand.Intn(r.maxScore) + 1
 		fmt.Printf("choosing highest of: %d, %d\n", roll1, roll2)
 		if roll1 > roll2 {
 			return roll1
@@ -64,8 +62,8 @@ func (r Roll) getRoll() int {
 		}
 	}
 	if r.chooseLow {
-		roll1 := r.randomizer.Intn(r.maxScore) + 1
-		roll2 := r.randomizer.Intn(r.maxScore) + 1
+		roll1 := rand.Intn(r.maxScore) + 1
+		roll2 := rand.Intn(r.maxScore) + 1
 		fmt.Printf("choosing lowest of: %d, %d\n", roll1, roll2)
 		if roll1 < roll2 {
 			return roll1
@@ -73,7 +71,7 @@ func (r Roll) getRoll() int {
 			return roll2
 		}
 	}
-	return r.randomizer.Intn(r.maxScore) + 1
+	return rand.Intn(r.maxScore) + 1
 }
 
 func parseInt(argStr, reStr string, defInt int, trimBeginChar bool) int {

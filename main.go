@@ -15,6 +15,7 @@ func main() {
 		os.Exit(1)
 	}
 
-	r := roll.ParseStrToRoll(os.Args[1], rand.New(rand.NewSource(time.Now().Unix())))
+	rand.Seed(time.Now().UnixNano())
+	r := roll.ParseStrToRoll(os.Args[1])
 	fmt.Println(r.Calc())
 }
