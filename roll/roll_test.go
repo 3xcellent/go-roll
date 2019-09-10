@@ -53,14 +53,14 @@ func TestParseStrToRoll(t *testing.T) {
 			},
 		},
 		{
-			name: "2d4-1",
-			args: args{"2d4h-1"},
+			name: "d100",
+			args: args{"d100h"},
 			want: Roll{
-				numRolls:   2,
-				maxScore:   4,
+				numRolls:   1,
+				maxScore:   100,
 				chooseHigh: true,
 				chooseLow:  false,
-				modifier:   -1,
+				modifier:   0,
 			},
 		},
 		{
@@ -86,19 +86,19 @@ func TestParseStrToRoll(t *testing.T) {
 
 func TestRoll_Calc(t *testing.T) {
 	rand.Seed(time.Now().UnixNano())
-	r := ParseStrToRoll("d20")
+	r := ParseStrToRoll("d100")
 
 	totals := map[int]int{}
 	for i := 1; i <= r.maxScore; i++ {
 		totals[i] = 0
 	}
 
-	for i := 0; i < 10000; i++ {
+	for i := 0; i < 100000; i++ {
 		val := r.Calc()
 		totals[val] = totals[val] + 1
 	}
 
-	for i := 1; i <= 20; i++ {
+	for i := 1; i <= r.maxScore; i++ {
 		fmt.Printf("%d - %d\n", i, totals[i])
 	}
 }

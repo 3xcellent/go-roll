@@ -10,10 +10,10 @@ import (
 
 const (
 	reRolls    = `^[^d]*`
-	reModifier = `[\+|-]\d\d?`
-	reType     = `d\d\d?`
-	reHigh     = `d\d{1,2}h`
-	reLow      = `d\d{1,2}l`
+	reModifier = `[\+|-]\d{1,2}`
+	reType     = `d\d{1,3}`
+	reHigh     = `d\d{1,3}h`
+	reLow      = `d\d{1,3}l`
 )
 
 type Roll struct {
