@@ -15,6 +15,8 @@ const (
 	reLow      = `d\d{1,3}l`
 )
 
+type OutputFormatter func(Roll) string
+
 type Roll struct {
 	numRolls       int
 	maxScore       int
@@ -23,17 +25,17 @@ type Roll struct {
 	modifier       int
 	CalculatedRoll int
 	rolls          []int
-	formatter      func(Roll) string
+	formatter      OutputFormatter
 }
 
-func ParseStrToRoll(str string) Roll {
+func ParseStrToRoll(str string, formatter OutputFormatter) Roll {
 	return Roll{
 		numRolls:   parseInt(str, reRolls, 1, false),
 		maxScore:   parseInt(str, reType, 0, true),
 		chooseHigh: parseBool(str, reHigh),
 		chooseLow:  parseBool(str, reLow),
 		modifier:   parseInt(str, reModifier, 0, false),
-		formatter:  Verbose,
+		formatter:  formatter,
 	}
 }
 
