@@ -21,13 +21,16 @@ func main() {
 
 	rand.Seed(time.Now().UnixNano())
 
-	formatter := roll.Simple
+	r := roll.ParseStrToRoll(flag.Args()[0])
 	if *verbose {
-		formatter = roll.Verbose
+		r.SetVerbose()
 	}
-	r := roll.ParseStrToRoll(flag.Args()[0], formatter)
 
-	r.Calc()
+	err := r.Calc()
+	if err != nil {
+		fmt.Println(err.Error())
+		os.Exit(1)
+	}
 
 	fmt.Println(r.String())
 }

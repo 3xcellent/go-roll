@@ -1,6 +1,7 @@
 package roll
 
 import (
+	"errors"
 	"fmt"
 	"math/rand"
 	"regexp"
@@ -28,19 +29,26 @@ type Roll struct {
 	formatter      OutputFormatter
 }
 
-func ParseStrToRoll(str string, formatter OutputFormatter) Roll {
+func ParseStrToRoll(str string) Roll {
 	return Roll{
 		numRolls:   parseInt(str, reRolls, 1, false),
 		maxScore:   parseInt(str, reType, 0, true),
 		chooseHigh: parseBool(str, reHigh),
 		chooseLow:  parseBool(str, reLow),
 		modifier:   parseInt(str, reModifier, 0, false),
-		formatter:  formatter,
+		formatter:  Simple,
 	}
 }
 
-func (r *Roll) Calc() {
+func (r *Roll) SetVerbose() {
+	r.formatter = Verbose
+}
+
+func (r *Roll) Calc() error {
 	tot := 0
+	if r.chooseHigh || r.chooseLow && r.numRolls != 2 {
+		return errors.New("can only return high or low when rolling 2 times")
+	}
 
 	for i := 0; i < r.numRolls; i++ {
 		rolled := r.getRoll()
@@ -49,6 +57,7 @@ func (r *Roll) Calc() {
 	}
 
 	r.CalculatedRoll = tot + r.modifier
+	return nil
 }
 
 func (r *Roll) String() string {

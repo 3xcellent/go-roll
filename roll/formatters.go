@@ -35,7 +35,7 @@ func Verbose(r Roll) string {
 	}
 
 	if len(r.rolls) < 2 && r.modifier == 0 {
-		return fmt.Sprintf("Roll: %d (min/max %d/%d)\n",
+		return fmt.Sprintf("Roll: %d (min/max %d/%d)",
 			r.CalculatedRoll,
 			1*len(r.rolls)+r.modifier,
 			r.maxScore*len(r.rolls)+r.modifier)
@@ -44,6 +44,6 @@ func Verbose(r Roll) string {
 			r.CalculatedRoll,
 			1*len(r.rolls)+r.modifier,
 			r.maxScore*len(r.rolls)+r.modifier)
-		return fmt.Sprintf("%s%s%s\n", rollsStr, modifierStr, totalStr)
+		return fmt.Sprintf("%s%s%s", rollsStr, modifierStr, totalStr)
 	}
 }

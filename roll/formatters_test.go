@@ -46,7 +46,7 @@ func TestVerbose(t *testing.T) {
 					rolls:          []int{4},
 				},
 			},
-			want: "Roll: 9 (min/max 1/20)\n",
+			want: "Roll: 9 (min/max 1/20)",
 		},
 		{
 			name: "multiple rolls show individual rolls",
@@ -61,7 +61,7 @@ func TestVerbose(t *testing.T) {
 					rolls:          []int{4, 5, 3, 1},
 				},
 			},
-			want: "Rolls: 4, 5, 3, 1\nTotal: 13 (min/max 4/32)\n",
+			want: "Rolls: 4, 5, 3, 1\nTotal: 13 (min/max 4/32)",
 		},
 		{
 			name: "Modifiers show with correct +/-",
@@ -76,7 +76,7 @@ func TestVerbose(t *testing.T) {
 					rolls:          []int{4},
 				},
 			},
-			want: "Modifier: +9\nTotal: 22 (min/max 10/17)\n",
+			want: "Modifier: +9\nTotal: 22 (min/max 10/17)",
 		},
 	}
 	for _, tt := range tests {
