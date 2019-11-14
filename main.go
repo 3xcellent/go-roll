@@ -17,5 +17,6 @@ func main() {
 
 	rand.Seed(time.Now().UnixNano())
 	r := roll.ParseStrToRoll(os.Args[1])
-	fmt.Println(r.Calc())
+	r.Calc()
+	fmt.Println(r.String())
 }

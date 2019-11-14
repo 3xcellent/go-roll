@@ -5,7 +5,6 @@ import (
 	"math/rand"
 	"regexp"
 	"strconv"
-	"strings"
 )
 
 const (
@@ -17,11 +16,14 @@ const (
 )
 
 type Roll struct {
-	numRolls   int
-	maxScore   int
-	chooseHigh bool
-	chooseLow  bool
-	modifier   int
+	numRolls       int
+	maxScore       int
+	chooseHigh     bool
+	chooseLow      bool
+	modifier       int
+	CalculatedRoll int
+	rolls          []int
+	formatter      func(Roll) string
 }
 
 func ParseStrToRoll(str string) Roll {
@@ -31,30 +33,30 @@ func ParseStrToRoll(str string) Roll {
 		chooseHigh: parseBool(str, reHigh),
 		chooseLow:  parseBool(str, reLow),
 		modifier:   parseInt(str, reModifier, 0, false),
+		formatter:  Verbose,
 	}
 }
 
-func (r Roll) Calc() int {
-	var rolls []string
+func (r *Roll) Calc() {
 	tot := 0
 
 	for i := 0; i < r.numRolls; i++ {
 		rolled := r.getRoll()
-		rolls = append(rolls, fmt.Sprintf("%d", rolled))
+		r.rolls = append(r.rolls, rolled)
 		tot += rolled
 	}
 
-	if len(rolls) > 1 {
-		fmt.Printf("rolls: %s\n", strings.Join(rolls, ","))
-	}
-	return tot + r.modifier
+	r.CalculatedRoll = tot + r.modifier
 }
 
-func (r Roll) getRoll() int {
+func (r *Roll) String() string {
+	return r.formatter(*r)
+}
+
+func (r *Roll) getRoll() int {
 	if r.chooseHigh {
 		roll1 := rand.Intn(r.maxScore) + 1
 		roll2 := rand.Intn(r.maxScore) + 1
-		fmt.Printf("choosing highest of: %d, %d\n", roll1, roll2)
 		if roll1 > roll2 {
 			return roll1
 		} else {
@@ -64,7 +66,6 @@ func (r Roll) getRoll() int {
 	if r.chooseLow {
 		roll1 := rand.Intn(r.maxScore) + 1
 		roll2 := rand.Intn(r.maxScore) + 1
-		fmt.Printf("choosing lowest of: %d, %d\n", roll1, roll2)
 		if roll1 < roll2 {
 			return roll1
 		} else {
