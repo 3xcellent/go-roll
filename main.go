@@ -26,11 +26,7 @@ func main() {
 		r.SetVerbose()
 	}
 
-	err := r.Calc()
-	if err != nil {
-		fmt.Println(err.Error())
-		os.Exit(1)
-	}
+	r.Calc()
 
 	fmt.Println(r.String())
 }

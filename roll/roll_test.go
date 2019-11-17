@@ -2,6 +2,7 @@ package roll
 
 import (
 	"fmt"
+	"math"
 	"math/rand"
 	"testing"
 	"time"
@@ -104,21 +105,98 @@ func ParsedRollsAreEqual(expected, got Roll) bool {
 		len(expected.rolls) == len(got.rolls)
 }
 
+func TestRoll_Calc(t *testing.T) {
+	t.Run("sets correct number of rolls", func(t *testing.T) {
+		type fields struct {
+			numRolls       int
+			maxScore       int
+			chooseHigh     bool
+			chooseLow      bool
+			modifier       int
+			CalculatedRoll int
+			rolls          []int
+			formatter      OutputFormatter
+		}
+		tests := []struct {
+			name          string
+			parseString   string
+			expRollLength int
+		}{
+			{
+				name:          "for one roll",
+				parseString:   "d20",
+				expRollLength: 1,
+			},
+			{
+				name:          "for two rolls",
+				parseString:   "2d20",
+				expRollLength: 2,
+			},
+		}
+		for _, tt := range tests {
+			t.Run(tt.name, func(t *testing.T) {
+				r := ParseStrToRoll(tt.parseString)
+				r.Calc()
+				rollCount := len(r.rolls)
+				if rollCount != tt.expRollLength {
+					t.Errorf("Calc() expected # rows: %d | got : %d", tt.expRollLength, rollCount)
+				}
+			})
+		}
+	})
+}
+
 func TestRoll_CalcRandomness(t *testing.T) {
 	rand.Seed(time.Now().UnixNano())
 	r := ParseStrToRoll("d20")
-
+	testSize := int(math.Pow(2, 24)) // ~ 16 mil
+	fmt.Printf("test size: %d", testSize)
 	totals := map[int]int{}
 	for i := 1; i <= r.maxScore; i++ {
 		totals[i] = 0
 	}
 
-	for i := 0; i < 1000000; i++ {
+	for i := 0; i < testSize; i++ {
 		r.Calc()
 		totals[r.CalculatedRoll] = totals[r.CalculatedRoll] + 1
 	}
 
+	subGroupSize := testSize / r.maxScore
+	subGroupDeviations := make([]int, r.maxScore)
+
 	for i := 1; i <= r.maxScore; i++ {
-		fmt.Printf("%d - %d\n", i, totals[i])
+		subGroupDeviations[i-1] = absInt(subGroupSize - totals[i])
 	}
+	avg, min, max := avgMinMaxDeviations(subGroupDeviations)
+	fmt.Printf("test size: %d | avg +-: %d (%f%%) | min: %d (%f%%)  | max: %d (%f%%)\n",
+		testSize,
+		avg,
+		float64(avg)/float64(subGroupSize),
+		min,
+		float64(min)/float64(subGroupSize),
+		max,
+		float64(max)/float64(subGroupSize),
+	)
+}
+
+func avgMinMaxDeviations(slc []int) (int, int, int) {
+	tot, min, max := 0, slc[0], slc[0]
+	for _, d := range slc {
+		if d > max {
+			max = d
+		}
+		if d < min {
+			min = d
+		}
+		tot += d
+	}
+
+	return tot / len(slc), min, max
+}
+
+func absInt(i int) int {
+	if i < 0 {
+		return i * -1
+	}
+	return i
 }

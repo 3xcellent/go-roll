@@ -12,6 +12,7 @@ func Verbose(r Roll) string {
 	rollsStr := ""
 	modifierStr := ""
 
+	// rolls
 	if len(r.rolls) > 1 {
 		rollsStr = "Rolls: "
 		for idx, amt := range r.rolls {
@@ -23,17 +24,17 @@ func Verbose(r Roll) string {
 		}
 		rollsStr += "\n"
 	}
+
+	// modifier
 	if r.modifier != 0 {
 		modifierDirection := ""
-		if r.modifier < 0 {
-			modifierDirection = "-"
-		}
 		if r.modifier > 0 {
 			modifierDirection = "+"
 		}
 		modifierStr = fmt.Sprintf("Modifier: %s%d\n", modifierDirection, r.modifier)
 	}
 
+	// total
 	if len(r.rolls) < 2 && r.modifier == 0 {
 		return fmt.Sprintf("Roll: %d (min/max %d/%d)",
 			r.CalculatedRoll,

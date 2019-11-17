@@ -34,7 +34,7 @@ func TestVerbose(t *testing.T) {
 		want string
 	}{
 		{
-			name: "One dice rolls does show individual rolls",
+			name: "single roll does not show individual rolls",
 			args: args{
 				Roll{
 					numRolls:       1,
@@ -64,7 +64,7 @@ func TestVerbose(t *testing.T) {
 			want: "Rolls: 4, 5, 3, 1\nTotal: 13 (min/max 4/32)",
 		},
 		{
-			name: "Modifiers show with correct +/-",
+			name: "Modifiers show correctly for positive numbers",
 			args: args{
 				Roll{
 					numRolls:       1,
@@ -77,6 +77,51 @@ func TestVerbose(t *testing.T) {
 				},
 			},
 			want: "Modifier: +9\nTotal: 22 (min/max 10/17)",
+		},
+		{
+			name: "Modifiers show correctly for negative numbers",
+			args: args{
+				Roll{
+					numRolls:       1,
+					maxScore:       8,
+					chooseHigh:     false,
+					chooseLow:      false,
+					modifier:       -2,
+					CalculatedRoll: 2,
+					rolls:          []int{4},
+				},
+			},
+			want: "Modifier: -2\nTotal: 2 (min/max -1/6)",
+		},
+		{
+			name: "2d20h - keeping highest number performs the rolls twice",
+			args: args{
+				Roll{
+					numRolls:       2,
+					maxScore:       20,
+					chooseHigh:     false,
+					chooseLow:      false,
+					modifier:       0,
+					CalculatedRoll: 20,
+					rolls:          []int{3, 15, 4, 16},
+				},
+			},
+			want: "Rolls: (3, 15), (4, 16)\nTotal: 20 (min/max 1/20)",
+		},
+		{
+			name: "keeping highest number performs the rolls twice",
+			args: args{
+				Roll{
+					numRolls:       1,
+					maxScore:       8,
+					chooseHigh:     false,
+					chooseLow:      false,
+					modifier:       -2,
+					CalculatedRoll: 2,
+					rolls:          []int{4},
+				},
+			},
+			want: "Modifier: -2\nTotal: 2 (min/max -1/6)",
 		},
 	}
 	for _, tt := range tests {
