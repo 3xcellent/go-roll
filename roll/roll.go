@@ -63,9 +63,7 @@ func (r *Roll) Calc() {
 		} else {
 			tot = roll2
 		}
-	}
-
-	if r.chooseLow {
+	} else if r.chooseLow {
 		roll1 := 0
 		roll2 := 0
 		for i := 0; i < r.numRolls; i++ {
@@ -83,12 +81,12 @@ func (r *Roll) Calc() {
 		} else {
 			tot = roll2
 		}
-	}
-
-	for i := 0; i < r.numRolls; i++ {
-		rolled := r.getRoll()
-		r.rolls = append(r.rolls, rolled)
-		tot += rolled
+	} else {
+		for i := 0; i < r.numRolls; i++ {
+			rolled := r.getRoll()
+			r.rolls = append(r.rolls, rolled)
+			tot += rolled
+		}
 	}
 
 	r.CalculatedRoll = tot + r.modifier
