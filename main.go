@@ -10,13 +10,29 @@ import (
 	"github.com/3xcellent/go-roll/roll"
 )
 
+func init() {
+	flag.Usage = func() {
+		fmt.Fprintf(os.Stderr, "Usage of %s:\n", os.Args[0])
+		fmt.Println("\tgo-roll 2d8 [-v]")
+		fmt.Println()
+		fmt.Println("\tgo-roll d20h (roll a d20 twice but only keep high; for example: with advantage)")
+		fmt.Println("\tgo-roll d20l (roll a d20 twice but only keep low; for example: with disadvantage)")
+		fmt.Println("\tgo-roll 2d6+7 (roll two d6 and add +7 modifier)")
+		fmt.Println()
+		fmt.Println("Options:")
+		flag.PrintDefaults()
+		os.Exit(0)
+	}
+}
+
 func main() {
-	verbose := flag.Bool("v", false, "verbose")
+
+	verbose := flag.Bool("v", false, "more verbose details about roll")
 	flag.Parse()
 
 	if len(flag.Args()) < 1 {
-		fmt.Println("Example: roll 2d8")
-		os.Exit(1)
+		flag.Usage()
+		os.Exit(0)
 	}
 
 	rand.Seed(time.Now().UnixNano())
