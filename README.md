@@ -1,5 +1,5 @@
 # go-roll
-My attempt at a cli dnd dice roller
+My attempt at a cli dnd dice roller.  I'm going to over-engineer the crap out of this...
 
 ## Install
 ```

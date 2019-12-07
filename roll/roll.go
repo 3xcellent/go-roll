@@ -5,6 +5,8 @@ import (
 	"math/rand"
 	"regexp"
 	"strconv"
+
+	"github.com/sirupsen/logrus"
 )
 
 const (
@@ -44,49 +46,32 @@ func (r *Roll) SetVerbose() {
 }
 
 func (r *Roll) Calc() {
-	var tot int
-	if r.chooseHigh {
-		roll1 := 0
-		roll2 := 0
-		for i := 0; i < r.numRolls; i++ {
-			rolled := r.getRoll()
-			r.rolls = append(r.rolls, rolled)
-			roll1 += rolled
-		}
-		for i := 0; i < r.numRolls; i++ {
-			rolled := r.getRoll()
-			r.rolls = append(r.rolls, rolled)
-			roll2 += rolled
-		}
-		if roll1 > roll2 {
-			tot = roll1
+	tot := 0
+
+	for i := 0; i < r.numRolls; i++ {
+		if r.chooseHigh || r.chooseLow {
+			roll1 := r.getRoll()
+			roll2 := r.getRoll()
+			r.rolls = append(r.rolls, roll1, roll2)
+			if r.chooseHigh {
+				if roll1 > roll2 {
+					tot += roll1
+				} else {
+					tot += roll2
+				}
+			} else {
+				if roll1 < roll2 {
+					tot += roll1
+				} else {
+					tot += roll2
+				}
+			}
 		} else {
-			tot = roll2
-		}
-	} else if r.chooseLow {
-		roll1 := 0
-		roll2 := 0
-		for i := 0; i < r.numRolls; i++ {
-			rolled := r.getRoll()
-			r.rolls = append(r.rolls, rolled)
-			roll1 += rolled
-		}
-		for i := 0; i < r.numRolls; i++ {
-			rolled := r.getRoll()
-			r.rolls = append(r.rolls, rolled)
-			roll2 += rolled
-		}
-		if roll1 < roll2 {
-			tot = roll1
-		} else {
-			tot = roll2
-		}
-	} else {
-		for i := 0; i < r.numRolls; i++ {
 			rolled := r.getRoll()
 			r.rolls = append(r.rolls, rolled)
 			tot += rolled
 		}
+		logrus.Debugf("roll: %d, total: %d | rolls: %+v", i+1, tot, r.rolls)
 	}
 
 	r.CalculatedRoll = tot + r.modifier

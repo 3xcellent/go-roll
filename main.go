@@ -7,6 +7,8 @@ import (
 	"os"
 	"time"
 
+	"github.com/sirupsen/logrus"
+
 	"github.com/3xcellent/go-roll/roll"
 )
 
@@ -26,9 +28,15 @@ func init() {
 }
 
 func main() {
-
-	verbose := flag.Bool("v", false, "more verbose details about roll")
+	verbose := flag.Bool("v", false, "output verbose roll information")
+	debug := flag.Bool("d", false, "outout debug information")
 	flag.Parse()
+
+	if *debug {
+		logrus.SetLevel(logrus.DebugLevel)
+	} else {
+		logrus.SetLevel(logrus.ErrorLevel)
+	}
 
 	if len(flag.Args()) < 1 {
 		flag.Usage()
